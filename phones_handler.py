@@ -7,6 +7,9 @@ from mysql_data import MySQLData
 
 
 class PhonesHandler(tornado.web.RequestHandler):
+    def initialize(self, conn):
+        self.conn = conn
+
     @tornado.web.asynchronous
     def get(self):
         self.write('Hello Phones!')
@@ -16,11 +19,8 @@ class PhonesHandler(tornado.web.RequestHandler):
     def post(self):
         phone = self.get_body_argument("phone", default=0)
 
-        md = MySQLData()
-        md.connect_to_db("192.168.1.250", "admin", "admin", "phones_nv")
-        result = md.get_data_by_phone(phone)
-        md.disconnect_from_db()
+        db_result = MySQLData.get_data_by_phone(self.conn, phone)
 
         self.set_header("Content-Type", "application/json; charset=utf-8")
-        self.write(result)
+        self.write(db_result)
         self.finish()
