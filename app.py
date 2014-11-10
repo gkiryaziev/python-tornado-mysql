@@ -14,12 +14,12 @@ from ws_handler import WSHandler
 
 
 def main():
-    #conn_pool = MySQLData.connect_to_db("192.168.1.250", "admin", "admin", "testdb")
+    mysql_object = MySQLData("192.168.1.250", "admin", "admin", "phones_nv")
 
     application = tornado.web.Application([
         (r"/", IndexHandler),
-        (r"/phones", PhonesHandler),
-        #(r"/insert", InsertHandler, {"conn_pool": conn_pool}),
+        (r"/phones", PhonesHandler, {"mysql_object": mysql_object}),
+        (r"/insert", InsertHandler, {"mysql_object": mysql_object}),
         (r"/ws", WSHandler),
     ])
 

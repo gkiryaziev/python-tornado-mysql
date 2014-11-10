@@ -7,20 +7,16 @@ from mysql_data import MySQLData
 
 
 class PhonesHandler(tornado.web.RequestHandler):
-    def initialize(self, conn):
-        self.conn = conn
+    def initialize(self, mysql_object):
+        self.mysql_object = mysql_object
 
-    @tornado.web.asynchronous
     def get(self):
-        self.write('Hello Phones!')
-        self.finish()
-
-    @tornado.web.asynchronous
-    def post(self):
-        phone = self.get_body_argument("phone", default=0)
-
-        db_result = MySQLData.get_data_by_phone(self.conn, phone)
-
+        db_result = self.mysql_object.get_data_by_query("all", 0)
         self.set_header("Content-Type", "application/json; charset=utf-8")
         self.write(db_result)
-        self.finish()
+
+    def post(self):
+        phone = self.get_body_argument("phone", default=0)
+        db_result = self.mysql_object.get_data_by_query("phone", phone)
+        self.set_header("Content-Type", "application/json; charset=utf-8")
+        self.write(db_result)
